@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChronoLux | Haute Horlogerie — Time, Perfected</title>
+  <meta name="description" content="ChronoLux embodies Swiss haute horlogerie, combining aerospace-grade materials, in-house tourbillon calibers, and timeless black-and-gold aesthetics.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              'gold-light': '#F5E298',
+              'gold-dark': '#997819',
+              dark: '#060608',
+              surface: '#0D0D12',
+              card: '#121218',
+              border: 'rgba(212, 175, 55, 0.18)'
+            }
+          },
+          fontFamily: {
+            serif: ['Cinzel', 'serif'],
+            display: ['Playfair Display', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-[#060608] text-white selection:bg-[#D4AF37] selection:text-black">
+
+  <!-- Custom Luxury Cursor -->
+  <div class="custom-cursor-dot" id="cursor-dot"></div>
+  <div class="custom-cursor-ring" id="cursor-ring"></div>
+
+  <!-- Preloader Screen -->
+  <div id="preloader">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-full border border-[#D4AF37] flex items-center justify-center">
+        <i data-lucide="watch" class="w-4 h-4 text-[#D4AF37]"></i>
+      </div>
+      <span class="font-serif tracking-[0.25em] text-lg font-bold text-white">CHRONOLUX</span>
+    </div>
+    <div class="loader-bar-bg">
+      <div class="loader-bar-fill" id="loader-fill"></div>
+    </div>
+    <div class="flex flex-col items-center gap-1 text-xs tracking-wider text-[#A3A3B3]">
+      <span id="loader-status">Calibrating Escapement Architecture...</span>
+      <span class="text-[#D4AF37] font-mono text-sm" id="loader-pct">0%</span>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Glassmorphism Navigation Bar -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300" id="main-nav">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full border border-[#D4AF37]/40 flex items-center justify-center bg-[#0D0D12] group-hover:border-[#D4AF37] group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all">
+          <svg class="w-5 h-5 text-[#D4AF37]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="9"/>
+            <polyline points="12 6 12 12 16 14"/>
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-serif tracking-[0.28em] text-base font-bold gold-text">CHRONOLUX</span>
+          <span class="text-[9px] tracking-[0.3em] uppercase text-[#A3A3B3]">Genève • Atelier 1884</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-8 text-xs tracking-[0.16em] uppercase text-[#A3A3B3]">
+        <a href="#hero-section" class="hover:text-[#D4AF37] transition-colors py-1">Masterpiece</a>
+        <a href="#masterpiece-details" class="hover:text-[#D4AF37] transition-colors py-1">Details & Price</a>
+        <a href="#collection" class="hover:text-[#D4AF37] transition-colors py-1">Collection</a>
+        <a href="#craftsmanship" class="hover:text-[#D4AF37] transition-colors py-1">Craftsmanship</a>
+        <a href="#features" class="hover:text-[#D4AF37] transition-colors py-1">Pillars</a>
+        <a href="#comparison" class="hover:text-[#D4AF37] transition-colors py-1">Compare</a>
+        <a href="#contact" class="hover:text-[#D4AF37] transition-colors py-1">Concierge</a>
+      </nav>
+
+      <!-- Action Utilities -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Soundscape Toggle (Synthetic Swiss Escapement) -->
+        <button id="sound-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 hover:border-[#D4AF37]/40 bg-white/5 transition-all text-xs text-[#A3A3B3]" title="Toggle Escapement Sound">
+          <div class="flex items-center gap-0.5 h-3" id="sound-indicator">
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+          </div>
+          <span class="hidden sm:inline text-[10px] tracking-wider uppercase" id="sound-text">Audio: Off</span>
+        </button>
+
+        <!-- Wishlist Toggle -->
+        <button id="open-wishlist" class="relative p-2.5 rounded-full border border-white/10 hover:border-[#D4AF37]/40 bg-white/5 transition-all text-[#A3A3B3] hover:text-white" title="Wishlist">
+          <i data-lucide="heart" class="w-4 h-4"></i>
+          <span id="wishlist-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold flex items-center justify-center opacity-0 transition-opacity">0</span>
+        </button>
+
+        <!-- Cart Trigger -->
+        <button id="open-cart" class="relative flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37] bg-white/5 hover:bg-[#D4AF37]/10 transition-all text-xs" title="Shopping Cart">
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-[#D4AF37]"></i>
+          <span class="hidden sm:inline font-mono text-white text-xs" id="nav-cart-total">$0</span>
+          <span id="cart-badge" class="w-4 h-4 rounded-full bg-[#D4AF37] text-black text-[10px] font-bold flex items-center justify-center">0</span>
+        </button>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-white hover:text-[#D4AF37]">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Drawer Nav -->
+    <div id="mobile-nav" class="hidden md:hidden px-6 py-6 bg-[#0B0B0E] border-b border-white/10 flex-col gap-4 text-xs tracking-wider uppercase">
+      <a href="#hero-section" class="py-2 border-b border-white/5 hover:text-[#D4AF37]">Masterpiece</a>
+      <a href="#masterpiece-details" class="py-2 border-b border-white/5 hover:text-[#D4AF37]">Details & Price</a>
+      <a href="#collection" class="py-2 border-b border-white/5 hover:text-[#D4AF37]">Collection</a>
+      <a href="#craftsmanship" class="py-2 border-b border-white/5 hover:text-[#D4AF37]">Craftsmanship</a>
+      <a href="#features" class="py-2 border-b border-white/5 hover:text-[#D4AF37]">Pillars</a>
+      <a href="#comparison" class="py-2 border-b border-white/5 hover:text-[#D4AF37]">Compare</a>
+      <a href="#contact" class="py-2 hover:text-[#D4AF37]">Concierge</a>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- 1. HERO SECTION (Apple-Style 30FPS Scroll Sequence - NO BUTTONS ON HERO)  -->
+  <!-- ========================================================================= -->
+  <section id="hero-section" class="hero-scroll-container">
+    
+    <div class="hero-sticky-stage">
+      
+      <!-- Background Ambient Glow -->
+      <div class="hero-glow-back"></div>
+
+      <!-- HTML5 Canvas Rendering 240 Frames -->
+      <canvas id="hero-canvas"></canvas>
+
+      <!-- Vignette and Lighting Layer -->
+      <div class="hero-vignette"></div>
+
+      <!-- Hero Overlay Phase 1: Opening Title & Tagline -->
+      <div class="hero-text-overlay" id="hero-phase-1">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#060608]/80 backdrop-blur-md mb-6">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-ping"></span>
+          <span class="text-[11px] tracking-[0.25em] uppercase text-[#F5E298] font-medium">Haute Horlogerie • Geneva Edition</span>
+        </div>
+        <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
+          Time, <span class="gold-text">Perfected.</span>
+        </h1>
+        <p class="max-w-2xl text-lg md:text-xl text-[#A3A3B3] font-light leading-relaxed tracking-wide">
+          Precision, elegance, and timeless design on your wrist.
+        </p>
+      </div>
+
+      <!-- Hero Overlay Phase 2: Material Architecture & 3D Rotation -->
+      <div class="hero-text-overlay" id="hero-phase-2">
+        <div class="max-w-4xl w-full px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-left">
+          <div class="glass-panel p-6 max-w-sm">
+            <span class="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">Architecture</span>
+            <h3 class="font-serif text-2xl text-white mt-1 mb-2">Aerospace 904L Steel</h3>
+            <p class="text-xs text-[#A3A3B3] leading-relaxed">
+              Forged under 1,200 metric tons of hydrostatic pressure, then hand-satin finished with microscopic grain alignment.
+            </p>
+          </div>
+          <div class="glass-panel p-6 max-w-sm text-right">
+            <span class="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">Precious Metal</span>
+            <h3 class="font-serif text-2xl text-white mt-1 mb-2">18K Solid Yellow Gold</h3>
+            <p class="text-xs text-[#A3A3B3] leading-relaxed">
+              Uncompromising luster. Fluted bezel and center jubilee links micro-polished with diamond-paste lapidary wheels.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Overlay Phase 3: Dial & Faceted Diamond Markers -->
+      <div class="hero-text-overlay" id="hero-phase-3">
+        <div class="max-w-3xl text-center">
+          <span class="inline-block text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold mb-3">Dial Horology</span>
+          <h2 class="font-serif text-4xl md:text-6xl text-white font-bold mb-4">
+            Celestial Sunburst Dial
+          </h2>
+          <p class="text-sm md:text-base text-[#A3A3B3] max-w-xl mx-auto leading-relaxed">
+            Coated in PVD cobalt blue with hand-applied Roman numerals and 12 brilliant-cut diamond hour indices, radiating timeless luminescence.
+          </p>
+        </div>
+      </div>
+
+      <!-- Hero Overlay Phase 4: Exploded Internal Caliber Architecture -->
+      <div class="hero-text-overlay" id="hero-phase-4">
+        <div class="max-w-4xl text-center">
+          <span class="inline-block text-xs uppercase tracking-[0.3em] text-[#D4AF37] font-semibold mb-3">Exploded Engineering</span>
+          <h2 class="font-serif text-4xl md:text-6xl text-white font-bold mb-4">
+            318 Micro-Components. Zero Compromise.
+          </h2>
+          <p class="text-sm md:text-base text-[#A3A3B3] max-w-2xl mx-auto mb-6">
+            In-House Caliber CL-920 Tourbillon with 72-hour power reserve, twin balance spring, and Geneva Seal hand-anglage finishing.
+          </p>
+          <div class="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-[#F5E298]">
+            <span>Scroll downward to explore details and price</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 animate-bounce"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subtle Hero Scroll Cue (NO BUTTONS on hero section) -->
+      <div class="hero-scroll-cue" id="hero-scroll-cue">
+        <span class="text-[10px] tracking-[0.3em] uppercase text-[#A3A3B3]">Scroll to Deconstruct</span>
+        <div class="hero-scroll-line"></div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 2. DEDICATED SECTION: MASTERPIECE EXPLANATION, DETAILS & PRICING           -->
+  <!-- ========================================================================= -->
+  <section id="masterpiece-details" class="relative py-28 px-6 bg-[#08080C] border-t border-b border-[#D4AF37]/20">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-20 reveal-on-scroll">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#D4AF37]/30 bg-black/40 text-[10px] tracking-[0.25em] uppercase text-[#D4AF37] mb-4">
+          The Flagship Horizon
+        </div>
+        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
+          The Sovereign Tourbillon
+        </h2>
+        <p class="text-[#A3A3B3] text-sm md:text-base leading-relaxed">
+          An unordinary timepiece forged for the discerning collector. Inspect every hand-finished facet, calibrate your bespoke configuration, and discover transparent valuation.
+        </p>
+      </div>
+
+      <!-- Main Showcase Grid: Interactive Anatomy vs Price & Configurator -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left: Interactive Exploded Anatomy Stage (7 Cols) -->
+        <div class="lg:col-span-7 relative reveal-on-scroll">
+          <div class="glass-panel p-6 md:p-8 relative overflow-hidden group">
+            
+            <!-- Atmospheric Glow -->
+            <div class="absolute -top-24 -left-24 w-72 h-72 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Header of visual stage -->
+            <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#D4AF37]"></span>
+                <span class="font-serif text-sm tracking-widest uppercase text-white font-semibold">Exploded Architecture Inspection</span>
+              </div>
+              <span class="text-[11px] text-[#A3A3B3] font-mono">Caliber CL-920</span>
+            </div>
+
+            <!-- Exploded Watch Image with Interactive Hotspots -->
+            <div class="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-black/60 flex items-center justify-center">
+              <img 
+                id="masterpiece-inspect-img" 
+                src="Public/Images/Collection/sovereign-exploded.jpg" 
+                alt="ChronoLux Sovereign Exploded Architecture" 
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+
+              <!-- Interactive Hotspot 1: Sapphire Crystal -->
+              <div class="anatomy-hotspot" style="top: 25%; left: 28%;" data-title="Domed Sapphire Crystal" data-desc="Double anti-reflective coating, 9 Mohs scratch resistance, curved optical clarity.">
+                <span class="text-[10px] font-bold text-white">1</span>
+              </div>
+
+              <!-- Interactive Hotspot 2: 18K Bezel & Dial -->
+              <div class="anatomy-hotspot" style="top: 36%; left: 45%;" data-title="18K Gold Fluted Bezel" data-desc="Solid 18-karat yellow gold ring with diamond-cut fluting, reflecting light with high horology luster.">
+                <span class="text-[10px] font-bold text-white">2</span>
+              </div>
+
+              <!-- Interactive Hotspot 3: Escapement Tourbillon -->
+              <div class="anatomy-hotspot" style="top: 68%; left: 54%;" data-title="Tourbillon Escapement Cage" data-desc="Weight: 0.28 grams. Revolves once every 60 seconds to counteract gravitational timekeeping errors.">
+                <span class="text-[10px] font-bold text-white">3</span>
+              </div>
+
+              <!-- Interactive Hotspot 4: Dual-Tone Jubilee Links -->
+              <div class="anatomy-hotspot" style="top: 70%; left: 26%;" data-title="904L Micro-Adjust Links" data-desc="Solid 5-link jubilee bracelet with hidden Oysterlock safety clasp and 5mm comfort extension.">
+                <span class="text-[10px] font-bold text-white">4</span>
+              </div>
+            </div>
+
+            <!-- Dynamic Hotspot Info Banner -->
+            <div id="hotspot-info-box" class="mt-5 p-4 rounded-xl bg-black/50 border border-[#D4AF37]/30 transition-all">
+              <div class="flex items-center gap-2 mb-1">
+                <i data-lucide="crosshair" class="w-4 h-4 text-[#D4AF37]"></i>
+                <h4 id="hotspot-title" class="font-serif text-sm font-semibold text-[#F5E298]">Click on any numbered point to inspect architecture</h4>
+              </div>
+              <p id="hotspot-desc" class="text-xs text-[#A3A3B3] leading-relaxed">
+                Experience the 318 components engineered to absolute 0.001mm tolerance.
+              </p>
+            </div>
+
+            <!-- Image Switcher Tabs (Assembled vs Exploded vs High Angle) -->
+            <div class="flex items-center gap-3 mt-4">
+              <button class="inspect-view-btn active text-xs px-3 py-1.5 rounded-lg border border-[#D4AF37] bg-[#D4AF37]/10 text-white" data-src="Public/Images/Collection/sovereign-exploded.jpg">
+                Exploded Caliber
+              </button>
+              <button class="inspect-view-btn text-xs px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-[#A3A3B3] hover:text-white" data-src="Public/Images/Collection/sovereign-masterpiece.jpg">
+                Assembled Case
+              </button>
+              <button class="inspect-view-btn text-xs px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-[#A3A3B3] hover:text-white" data-src="Public/Images/Collection/sovereign-exploded-halo.jpg">
+                Illuminated Halo
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Executive Details, Live Price & Customizer (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-6 reveal-on-scroll">
+          
+          <div class="glass-panel p-8">
+            
+            <!-- Tier & Availability Badge -->
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-[11px] font-mono uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">
+                Ref. CL-920-SOV • Limited 100 Pieces
+              </span>
+              <span class="text-[10px] px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                In Atelier Stock
+              </span>
+            </div>
+
+            <!-- Watch Title -->
+            <h3 class="font-serif text-3xl font-bold text-white mb-2">
+              Sovereign Royal Tourbillon
+            </h3>
+            <p class="text-xs text-[#A3A3B3] mb-6 leading-relaxed">
+              Geneva-regulated automatic mechanical chronometer featuring 34 rubies, 72-hour power reserve, and open-heart skeletonized bridges.
+            </p>
+
+            <!-- Dynamic Price Showcase -->
+            <div class="p-5 rounded-2xl bg-[#060608]/90 border border-[#D4AF37]/30 mb-6">
+              <div class="flex items-baseline justify-between mb-1">
+                <span class="text-xs uppercase tracking-widest text-[#A3A3B3]">Acquisition Price</span>
+                <span class="text-[11px] text-[#D4AF37]">Complimentary White-Glove Escort</span>
+              </div>
+              <div class="flex items-baseline gap-3">
+                <span class="font-serif text-4xl md:text-5xl font-bold text-white" id="sovereign-live-price">$14,850</span>
+                <span class="text-xs line-through text-[#6B6B7B]">$17,500</span>
+                <span class="text-xs text-emerald-400 font-medium">Boutique Direct</span>
+              </div>
+              <p class="text-[11px] text-[#A3A3B3] mt-2 flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#D4AF37]"></i>
+                Or \$412/mo for 36 months with 0% APR Luxury Escrow financing.
+              </p>
+            </div>
+
+            <!-- Bespoke Configurator: Precious Alloy Finish -->
+            <div class="mb-5">
+              <label class="block text-xs uppercase tracking-wider text-white font-semibold mb-2">
+                1. Select Case Material & Alloy
+              </label>
+              <div class="grid grid-cols-3 gap-2.5" id="finish-options">
+                <button class="finish-btn active p-3 rounded-xl border border-[#D4AF37] bg-[#D4AF37]/10 text-left flex flex-col gap-1 transition-all" data-add="0" data-finish="18K Yellow Gold & 904L Steel">
+                  <span class="text-xs font-semibold text-white">Classic Gold</span>
+                  <span class="text-[10px] text-[#A3A3B3]">Included</span>
+                </button>
+                <button class="finish-btn p-3 rounded-xl border border-white/10 bg-white/5 text-left flex flex-col gap-1 transition-all hover:border-[#D4AF37]/50" data-add="1350" data-finish="Rose Gold Noir">
+                  <span class="text-xs font-semibold text-white">Rose Gold</span>
+                  <span class="text-[10px] text-[#A3A3B3]">+\$1,350</span>
+                </button>
+                <button class="finish-btn p-3 rounded-xl border border-white/10 bg-white/5 text-left flex flex-col gap-1 transition-all hover:border-[#D4AF37]/50" data-add="4650" data-finish="Celestial Platinum 950">
+                  <span class="text-xs font-semibold text-white">Platinum 950</span>
+                  <span class="text-[10px] text-[#A3A3B3]">+\$4,650</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Bespoke Configurator: Strap Selection -->
+            <div class="mb-6">
+              <label class="block text-xs uppercase tracking-wider text-white font-semibold mb-2">
+                2. Select Clasp & Strap Architecture
+              </label>
+              <div class="grid grid-cols-3 gap-2.5" id="strap-options">
+                <button class="strap-btn active p-3 rounded-xl border border-[#D4AF37] bg-[#D4AF37]/10 text-left flex flex-col gap-1 transition-all" data-add="0" data-strap="Two-Tone Jubilee">
+                  <span class="text-xs font-semibold text-white">Jubilee Steel</span>
+                  <span class="text-[10px] text-[#A3A3B3]">Standard</span>
+                </button>
+                <button class="strap-btn p-3 rounded-xl border border-white/10 bg-white/5 text-left flex flex-col gap-1 transition-all hover:border-[#D4AF37]/50" data-add="450" data-strap="Obsidian Alligator Leather">
+                  <span class="text-xs font-semibold text-white">Alligator</span>
+                  <span class="text-[10px] text-[#A3A3B3]">+\$450</span>
+                </button>
+                <button class="strap-btn p-3 rounded-xl border border-white/10 bg-white/5 text-left flex flex-col gap-1 transition-all hover:border-[#D4AF37]/50" data-add="750" data-strap="Grade 5 Titanium Milanese">
+                  <span class="text-xs font-semibold text-white">Titanium Mesh</span>
+                  <span class="text-[10px] text-[#A3A3B3]">+\$750</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Transparent Horological Value Breakdown -->
+            <div class="p-4 rounded-xl bg-white/[0.02] border border-white/5 mb-6 text-xs text-[#A3A3B3] space-y-2">
+              <div class="flex justify-between items-center text-white font-medium border-b border-white/5 pb-1">
+                <span>Value & Craftsmanship Assessment</span>
+                <span class="text-[#D4AF37]">Geneva Seal Grade</span>
+              </div>
+              <div class="flex justify-between">
+                <span>• 240 Hours Artisan Hand-Assembly</span>
+                <span class="text-white">Included</span>
+              </div>
+              <div class="flex justify-between">
+                <span>• COSC Chronometer Testing (-2/+2 sec)</span>
+                <span class="text-white">Certified</span>
+              </div>
+              <div class="flex justify-between">
+                <span>• 5-Year ChronoLux Atelier Warranty</span>
+                <span class="text-white">Certified</span>
+              </div>
+              <div class="flex justify-between">
+                <span>• Armored Courier & Vault Handover</span>
+                <span class="text-white">Complimentary</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons for the Details & Price Section -->
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button id="buy-sovereign-btn" class="btn-gold flex-1 py-4 text-xs font-bold tracking-widest uppercase">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                <span>Acquire Masterpiece</span>
+              </button>
+              <button id="book-sovereign-viewing" class="btn-secondary flex-1 py-4 text-xs font-semibold tracking-wider">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+                <span>VIP Private Viewing</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 3. APPLE-STYLE HOROLOGY BY THE NUMBERS (Interactive Big Metrics)          -->
+  <!-- ========================================================================= -->
+  <section class="py-24 px-6 bg-[#060608] border-b border-white/5 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 text-center">
+        
+        <div class="reveal-on-scroll">
+          <div class="font-serif text-5xl lg:text-6xl font-bold gold-text mb-2">318</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-white font-semibold">Micro-Parts</div>
+          <div class="text-[11px] text-[#A3A3B3] mt-1">Tolerance to 0.001mm</div>
+        </div>
+
+        <div class="reveal-on-scroll">
+          <div class="font-serif text-5xl lg:text-6xl font-bold text-white mb-2">28,800</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">Vibrations / Hr</div>
+          <div class="text-[11px] text-[#A3A3B3] mt-1">4Hz high-beat escapement</div>
+        </div>
+
+        <div class="reveal-on-scroll">
+          <div class="font-serif text-5xl lg:text-6xl font-bold gold-text mb-2">72h</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-white font-semibold">Power Reserve</div>
+          <div class="text-[11px] text-[#A3A3B3] mt-1">Dual-barrel kinetic storage</div>
+        </div>
+
+        <div class="reveal-on-scroll">
+          <div class="font-serif text-5xl lg:text-6xl font-bold text-white mb-2">100m</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-semibold">Hermetic Depth</div>
+          <div class="text-[11px] text-[#A3A3B3] mt-1">10 ATM pressure sealed</div>
+        </div>
+
+        <div class="col-span-2 md:col-span-1 reveal-on-scroll">
+          <div class="font-serif text-5xl lg:text-6xl font-bold gold-text mb-2">240h</div>
+          <div class="text-xs uppercase tracking-[0.2em] text-white font-semibold">Artisan Handcraft</div>
+          <div class="text-[11px] text-[#A3A3B3] mt-1">Single master watchmaker</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 4. WATCH COLLECTION (Product Grid with Filters, Search, Modal Triggers)   -->
+  <!-- ========================================================================= -->
+  <section id="collection" class="py-28 px-6 bg-[#07070A] relative">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Section Title & Lead -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6 reveal-on-scroll">
+        <div>
+          <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-2">Curated Horology</span>
+          <h2 class="font-serif text-4xl md:text-5xl font-bold text-white">
+            The ChronoLux Collection
+          </h2>
+        </div>
+        <p class="max-w-md text-sm text-[#A3A3B3] leading-relaxed">
+          From skeleton tourbillons to sports divers and connected chronometers, each piece reflects unparalleled Swiss mechanical mastery.
+        </p>
+      </div>
+
+      <!-- Filter Tabs, Search & Sort Bar -->
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-6 mb-12 pb-6 border-b border-white/10 reveal-on-scroll">
+        
+        <!-- Category Filter Buttons (All 6 Requested Categories Included!) -->
+        <div class="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-2 scrollbar-none" id="category-filters">
+          <button class="filter-tab active" data-category="all">All Timepieces</button>
+          <button class="filter-tab" data-category="luxury">Luxury Watches</button>
+          <button class="filter-tab" data-category="sports">Sports Watches</button>
+          <button class="filter-tab" data-category="smart">Smart Watches</button>
+          <button class="filter-tab" data-category="classic">Classic Watches</button>
+          <button class="filter-tab" data-category="mens">Men's Watches</button>
+          <button class="filter-tab" data-category="womens">Women's Watches</button>
+        </div>
+
+        <!-- Search and Sort Tools -->
+        <div class="flex items-center gap-4 w-full lg:w-auto">
+          
+          <!-- Search input -->
+          <div class="relative flex-1 lg:w-64">
+            <i data-lucide="search" class="w-4 h-4 text-[#A3A3B3] absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+            <input 
+              type="text" 
+              id="watch-search" 
+              placeholder="Search references, movements..." 
+              class="w-full bg-[#121218] border border-white/10 rounded-full pl-10 pr-4 py-2 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none transition-colors"
+            />
+          </div>
+
+          <!-- Sort dropdown -->
+          <div class="relative">
+            <select id="sort-select" class="appearance-none bg-[#121218] border border-white/10 rounded-full pl-4 pr-10 py-2 text-xs text-white focus:border-[#D4AF37] focus:outline-none cursor-pointer">
+              <option value="featured">Featured Order</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-[#A3A3B3] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Product Grid Container -->
+      <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Rendered via JavaScript from watch catalog data -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="no-products-msg" class="hidden text-center py-20">
+        <i data-lucide="watch" class="w-12 h-12 text-[#6B6B7B] mx-auto mb-4"></i>
+        <h3 class="font-serif text-xl text-white mb-2">No matching timepieces found</h3>
+        <p class="text-sm text-[#A3A3B3]">Try adjusting your search criteria or resetting filters.</p>
+        <button id="reset-filters-btn" class="btn-secondary mt-6 text-xs">Reset All Filters</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 5. ABOUT US (The Atelier Heritage, Craftsmanship, Precision & Materials)  -->
+  <!-- ========================================================================= -->
+  <section id="craftsmanship" class="py-28 px-6 bg-[#060608] relative overflow-hidden">
+    
+    <!-- Ambient Blur Background -->
+    <div class="absolute top-1/2 right-0 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        
+        <!-- Left: Editorial Content & Philosophy (6 Cols) -->
+        <div class="lg:col-span-6 reveal-on-scroll">
+          <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-3">Atelier Heritage</span>
+          <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+            The Pursuit of Perpetual <span class="gold-text">Elegance.</span>
+          </h2>
+          <p class="text-sm md:text-base text-[#A3A3B3] leading-relaxed mb-6 font-light">
+            Founded in Geneva in 1884, ChronoLux was born from a singular obsession: to push the boundaries of mechanical precision while honoring the noble traditions of Swiss haute horlogerie.
+          </p>
+          <p class="text-sm md:text-base text-[#A3A3B3] leading-relaxed mb-8 font-light">
+            Each timepiece is not merely an instrument of measurement, but a kinetic sculpture. From hand-chamfered bridges polished with elderberry pith wood to balance wheels trued by human touch, our artisans spend hundreds of hours ensuring that every second is a testament to human mastery.
+          </p>
+
+          <!-- 3 Pillars of ChronoLux -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-white/10">
+            <div>
+              <div class="w-10 h-10 rounded-full border border-[#D4AF37]/40 flex items-center justify-center bg-[#121218] mb-3 text-[#D4AF37]">
+                <i data-lucide="compass" class="w-4 h-4"></i>
+              </div>
+              <h4 class="font-serif text-sm font-semibold text-white mb-1">Micro-Precision</h4>
+              <p class="text-xs text-[#A3A3B3]">Regulated to within ±1 second per day under six test positions.</p>
+            </div>
+            <div>
+              <div class="w-10 h-10 rounded-full border border-[#D4AF37]/40 flex items-center justify-center bg-[#121218] mb-3 text-[#D4AF37]">
+                <i data-lucide="feather" class="w-4 h-4"></i>
+              </div>
+              <h4 class="font-serif text-sm font-semibold text-white mb-1">Hand Anglage</h4>
+              <p class="text-xs text-[#A3A3B3]">Every internal bridge hand-beveled with diamond compound.</p>
+            </div>
+            <div>
+              <div class="w-10 h-10 rounded-full border border-[#D4AF37]/40 flex items-center justify-center bg-[#121218] mb-3 text-[#D4AF37]">
+                <i data-lucide="gem" class="w-4 h-4"></i>
+              </div>
+              <h4 class="font-serif text-sm font-semibold text-white mb-1">Pure Alloys</h4>
+              <p class="text-xs text-[#A3A3B3]">Certified 18K gold and 904L aerospace steel forge.</p>
+            </div>
+          </div>
+
+          <!-- Master Watchmaker Quote -->
+          <div class="mt-8 p-5 rounded-2xl bg-white/[0.02] border-l-2 border-[#D4AF37] flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full overflow-hidden bg-white/10 shrink-0 border border-[#D4AF37]/30">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80" alt="Master Watchmaker" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="text-xs italic text-[#E2E8F0]">“We do not just construct mechanical watches; we capture time and preserve it for the next three generations.”</p>
+              <span class="text-[10px] tracking-wider uppercase text-[#D4AF37] font-semibold mt-1 block">Laurent Vaneau • Master Horologist</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Visual Craftsmanship Showcase (6 Cols) -->
+        <div class="lg:col-span-6 reveal-on-scroll">
+          <div class="relative grid grid-cols-2 gap-4">
+            <div class="space-y-4">
+              <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <img src="Public/Images/Collection/zenith-skeleton.jpg" alt="Artisan Assembly" class="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700">
+              </div>
+              <div class="glass-panel p-5">
+                <span class="font-serif text-3xl font-bold text-white block mb-1">140+</span>
+                <span class="text-xs text-[#A3A3B3]">Years of uninterrupted Geneva manufacture</span>
+              </div>
+            </div>
+            <div class="space-y-4 pt-8">
+              <div class="glass-panel p-5">
+                <span class="font-serif text-3xl font-bold gold-text block mb-1">100%</span>
+                <span class="text-xs text-[#A3A3B3]">In-house mechanical movement assembly</span>
+              </div>
+              <div class="rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <img src="Public/Images/Collection/aero-navigator.jpg" alt="Precision Calibration" class="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 6. FEATURES (The 7 Pillars of ChronoLux Luxury Engineering)                -->
+  <!-- ========================================================================= -->
+  <section id="features" class="py-28 px-6 bg-[#08080D] border-t border-b border-white/5 relative">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-2xl mx-auto mb-20 reveal-on-scroll">
+        <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-2">Pillars of Excellence</span>
+        <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
+          Engineered Beyond Standards
+        </h2>
+        <p class="text-sm text-[#A3A3B3]">
+          Every ChronoLux watch is constructed to fulfill seven unyielding promises of horological distinction.
+        </p>
+      </div>
+
+      <!-- 7 Features Grid (3 Columns) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1: Premium Craftsmanship -->
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
+            <i data-lucide="sparkles" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-white mb-3">Premium Craftsmanship</h3>
+          <p class="text-xs text-[#A3A3B3] leading-relaxed">
+            Every millimeter is hand-finished by master horologists with diamond beveling, Côtes de Genève stripes, and perlage graining.
+          </p>
+        </div>
+
+        <!-- Feature 2: High-Quality Materials -->
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
+            <i data-lucide="shield" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-white mb-3">High-Quality Materials</h3>
+          <p class="text-xs text-[#A3A3B3] leading-relaxed">
+            Forged in ultra-corrosion-resistant 904L aerospace steel, 18-karat solid yellow & rose gold, and scratchproof sapphire crystal.
+          </p>
+        </div>
+
+        <!-- Feature 3: Water Resistance -->
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
+            <i data-lucide="droplets" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-white mb-3">Water Resistance (10 ATM)</h3>
+          <p class="text-xs text-[#A3A3B3] leading-relaxed">
+            Hermetically sealed up to 100 meters (330 feet) with twin-gasket screw-down crown architecture for total aquatic resilience.
+          </p>
+        </div>
+
+        <!-- Feature 4: Reliable Movement -->
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
+            <i data-lucide="cpu" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-white mb-3">Reliable In-House Movement</h3>
+          <p class="text-xs text-[#A3A3B3] leading-relaxed">
+            High-beat Swiss calibers tuned to 28,800 vibrations per hour, offering up to 72 hours of uninterrupted kinetic reserve.
+          </p>
+        </div>
+
+        <!-- Feature 5: 2-Year International Warranty -->
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
+            <i data-lucide="award" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-white mb-3">2-Year International Warranty</h3>
+          <p class="text-xs text-[#A3A3B3] leading-relaxed">
+            Full comprehensive worldwide warranty covering movement calibration, gaskets, and mechanical integrity with complimentary overhaul.
+          </p>
+        </div>
+
+        <!-- Feature 6: Secure Payment -->
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="w-12 h-12 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mb-6">
+            <i data-lucide="lock" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-serif text-xl font-bold text-white mb-3">Secure Escrow Payment</h3>
+          <p class="text-xs text-[#A3A3B3] leading-relaxed">
+            Bank-grade 256-bit SSL encryption, escrow authorization, and private wire concierge to protect every luxury transaction.
+          </p>
+        </div>
+
+        <!-- Feature 7: Fast Delivery (Spanning wide) -->
+        <div class="glass-panel p-8 lg:col-span-3 reveal-on-scroll flex flex-col md:flex-row items-center justify-between gap-6">
+          <div class="flex items-center gap-6">
+            <div class="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0">
+              <i data-lucide="truck" class="w-7 h-7"></i>
+            </div>
+            <div>
+              <h3 class="font-serif text-xl font-bold text-white mb-1">Fast Armored Delivery</h3>
+              <p class="text-xs text-[#A3A3B3] max-w-2xl leading-relaxed">
+                Complimentary worldwide white-glove armored transit with GPS-monitored courier and 100% full-value insurance coverage to your door within 48 hours.
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0">
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#D4AF37]/40 bg-[#D4AF37]/5 text-xs text-[#F5E298] font-mono">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+              100% Insured Worldwide
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 7. APPLE-STYLE TIMEPIECE COMPARISON MATRIX (Longer Page Requirement)      -->
+  <!-- ========================================================================= -->
+  <section id="comparison" class="py-28 px-6 bg-[#060608] relative">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="text-center max-w-2xl mx-auto mb-16 reveal-on-scroll">
+        <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-2">Compare Models</span>
+        <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
+          Which ChronoLux is Yours?
+        </h2>
+        <p class="text-sm text-[#A3A3B3]">
+          Compare technical calibrations across our most celebrated models.
+        </p>
+      </div>
+
+      <!-- Comparison Table -->
+      <div class="overflow-x-auto glass-panel p-6 reveal-on-scroll">
+        <table class="w-full text-left text-xs min-w-[700px]">
+          <thead>
+            <tr class="border-b border-white/10 text-[#A3A3B3] uppercase tracking-wider">
+              <th class="py-4 px-4 font-semibold">Specifications</th>
+              <th class="py-4 px-4 font-serif text-sm text-white">Sovereign Tourbillon</th>
+              <th class="py-4 px-4 font-serif text-sm text-white">Royal Chronograph</th>
+              <th class="py-4 px-4 font-serif text-sm text-white">Vanguard Diver</th>
+              <th class="py-4 px-4 font-serif text-sm text-white">Apex Connected</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-[#A3A3B3]">
+            <tr>
+              <td class="py-4 px-4 font-medium text-white">Movement Architecture</td>
+              <td class="py-4 px-4 text-[#F5E298] font-semibold">In-House Tourbillon CL-920</td>
+              <td class="py-4 px-4">Column-Wheel Auto CL-410</td>
+              <td class="py-4 px-4">High-Beat Caliber CL-300</td>
+              <td class="py-4 px-4">Dual Horology Sapphire Hybrid</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-4 font-medium text-white">Case Material</td>
+              <td class="py-4 px-4">904L Steel & 18K Solid Gold</td>
+              <td class="py-4 px-4">18K Yellow Gold Monobloc</td>
+              <td class="py-4 px-4">Ceramic & Grade 5 Titanium</td>
+              <td class="py-4 px-4">DLC Brushed Titanium</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-4 font-medium text-white">Water Resistance</td>
+              <td class="py-4 px-4">100m (10 ATM)</td>
+              <td class="py-4 px-4">100m (10 ATM)</td>
+              <td class="py-4 px-4 text-emerald-400 font-semibold">300m (30 ATM)</td>
+              <td class="py-4 px-4">50m (5 ATM)</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-4 font-medium text-white">Power Reserve</td>
+              <td class="py-4 px-4">72 Hours Kinetic</td>
+              <td class="py-4 px-4">54 Hours Kinetic</td>
+              <td class="py-4 px-4">68 Hours Kinetic</td>
+              <td class="py-4 px-4">14 Days Smart / 60h Always-On</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-4 font-medium text-white">Starting Price</td>
+              <td class="py-4 px-4 font-serif text-base font-bold text-white">$14,850</td>
+              <td class="py-4 px-4 font-serif text-base font-bold text-white">$12,400</td>
+              <td class="py-4 px-4 font-serif text-base font-bold text-white">$8,950</td>
+              <td class="py-4 px-4 font-serif text-base font-bold text-white">$3,850</td>
+            </tr>
+            <tr>
+              <td class="py-4 px-4 font-medium text-white">Acquisition</td>
+              <td class="py-4 px-4">
+                <button onclick="window.scrollTo({top: document.getElementById('masterpiece-details').offsetTop, behavior: 'smooth'})" class="text-xs text-[#D4AF37] hover:underline font-semibold">
+                  Configure Now →
+                </button>
+              </td>
+              <td class="py-4 px-4">
+                <button onclick="app.openProductModal(2)" class="text-xs text-[#D4AF37] hover:underline font-semibold">
+                  View Specs →
+                </button>
+              </td>
+              <td class="py-4 px-4">
+                <button onclick="app.openProductModal(3)" class="text-xs text-[#D4AF37] hover:underline font-semibold">
+                  View Specs →
+                </button>
+              </td>
+              <td class="py-4 px-4">
+                <button onclick="app.openProductModal(4)" class="text-xs text-[#D4AF37] hover:underline font-semibold">
+                  View Specs →
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 8. COLLECTOR REVIEWS & WORLD PRESS ACCOLADES                              -->
+  <!-- ========================================================================= -->
+  <section class="py-24 px-6 bg-[#08080C] border-t border-white/5 relative">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Press Logos -->
+      <div class="text-center mb-14 reveal-on-scroll">
+        <span class="text-[11px] uppercase tracking-[0.25em] text-[#6B6B7B]">Recognized by International Horological Authorities</span>
+        <div class="flex flex-wrap items-center justify-center gap-10 md:gap-16 mt-6 opacity-60">
+          <span class="font-serif tracking-widest text-lg font-bold">HODINKEE</span>
+          <span class="font-serif tracking-widest text-lg font-bold">THE NEW YORK TIMES</span>
+          <span class="font-serif tracking-widest text-lg font-bold">ROBB REPORT</span>
+          <span class="font-serif tracking-widest text-lg font-bold">GQ LUXURY</span>
+          <span class="font-serif tracking-widest text-lg font-bold">FORBES LIFE</span>
+        </div>
+      </div>
+
+      <!-- Testimonials Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="flex text-[#D4AF37] mb-4">
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+          </div>
+          <p class="text-xs text-[#E2E8F0] leading-relaxed mb-6 italic">
+            “The Sovereign Tourbillon’s exploded dial reveals a depth of hand anglage that rivals Geneva houses charging triple the price. The blue dial under sunlight is simply mesmerizing.”
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#1A1A24] border border-[#D4AF37]/30 flex items-center justify-center font-serif text-xs text-[#D4AF37]">
+              AM
+            </div>
+            <div>
+              <h5 class="text-xs font-semibold text-white">Alexander Meyer</h5>
+              <span class="text-[10px] text-[#A3A3B3]">Zurich • Private Collector</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="flex text-[#D4AF37] mb-4">
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+          </div>
+          <p class="text-xs text-[#E2E8F0] leading-relaxed mb-6 italic">
+            “White glove courier arrived in London within 36 hours. The weight of the 18k gold bezel and the quiet precision of the escapement exceeded every expectation.”
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#1A1A24] border border-[#D4AF37]/30 flex items-center justify-center font-serif text-xs text-[#D4AF37]">
+              CH
+            </div>
+            <div>
+              <h5 class="text-xs font-semibold text-white">Lord Charles Hastings</h5>
+              <span class="text-[10px] text-[#A3A3B3]">London • Mayfair</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-panel p-8 reveal-on-scroll">
+          <div class="flex text-[#D4AF37] mb-4">
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+            <i data-lucide="star" class="w-4 h-4 fill-[#D4AF37]"></i>
+          </div>
+          <p class="text-xs text-[#E2E8F0] leading-relaxed mb-6 italic">
+            “The Vanguard Diver has endured deep dive expeditions in Polynesia without losing half a second. Indestructible ceramic and pure luxury pedigree.”
+          </p>
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#1A1A24] border border-[#D4AF37]/30 flex items-center justify-center font-serif text-xs text-[#D4AF37]">
+              SK
+            </div>
+            <div>
+              <h5 class="text-xs font-semibold text-white">Dr. Samantha Kane</h5>
+              <span class="text-[10px] text-[#A3A3B3]">Singapore • Marine Biologist</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 9. FREQUENTLY ASKED QUESTIONS (Haute Horlogerie Accordion)                -->
+  <!-- ========================================================================= -->
+  <section class="py-24 px-6 bg-[#060608] relative">
+    <div class="max-w-4xl mx-auto">
+      
+      <div class="text-center mb-16 reveal-on-scroll">
+        <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-2">Clarity & Confidence</span>
+        <h2 class="font-serif text-4xl font-bold text-white mb-4">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-sm text-[#A3A3B3]">Everything you need to know about acquisition, delivery, and manufacture warranties.</p>
+      </div>
+
+      <div class="space-y-4" id="faq-accordion">
+        
+        <div class="glass-panel p-6 cursor-pointer faq-item reveal-on-scroll">
+          <div class="flex items-center justify-between">
+            <h4 class="font-serif text-base font-semibold text-white">How does ChronoLux verify watch authenticity and calibration?</h4>
+            <i data-lucide="plus" class="w-4 h-4 text-[#D4AF37] faq-icon transition-transform"></i>
+          </div>
+          <div class="faq-content hidden mt-4 pt-4 border-t border-white/5 text-xs text-[#A3A3B3] leading-relaxed">
+            Every ChronoLux timepiece is accompanied by a cryptographically serialized NFC Certificate of Authenticity, physical chronometer certificate (-2/+2 sec COSC standard), and Geneva inspection dossier signed by our Head of Horology.
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 cursor-pointer faq-item reveal-on-scroll">
+          <div class="flex items-center justify-between">
+            <h4 class="font-serif text-base font-semibold text-white">What does the 2-Year International Warranty cover?</h4>
+            <i data-lucide="plus" class="w-4 h-4 text-[#D4AF37] faq-icon transition-transform"></i>
+          </div>
+          <div class="faq-content hidden mt-4 pt-4 border-t border-white/5 text-xs text-[#A3A3B3] leading-relaxed">
+            Our warranty covers all internal mechanical components, escapement timing regulation, water resistance seals, and hands/indices alignment. Registering your timepiece in our Atelier Vault extends your coverage to 5 full years with complimentary first service.
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 cursor-pointer faq-item reveal-on-scroll">
+          <div class="flex items-center justify-between">
+            <h4 class="font-serif text-base font-semibold text-white">How is the Armored White-Glove delivery handled?</h4>
+            <i data-lucide="plus" class="w-4 h-4 text-[#D4AF37] faq-icon transition-transform"></i>
+          </div>
+          <div class="faq-content hidden mt-4 pt-4 border-t border-white/5 text-xs text-[#A3A3B3] leading-relaxed">
+            All shipments travel via secure armored courier with full transit insurance. A biometric or signed handover is coordinated in advance by your dedicated VIP concierge at your private residence or private bank.
+          </div>
+        </div>
+
+        <div class="glass-panel p-6 cursor-pointer faq-item reveal-on-scroll">
+          <div class="flex items-center justify-between">
+            <h4 class="font-serif text-base font-semibold text-white">Can I schedule a private viewing at a ChronoLux boutique?</h4>
+            <i data-lucide="plus" class="w-4 h-4 text-[#D4AF37] faq-icon transition-transform"></i>
+          </div>
+          <div class="faq-content hidden mt-4 pt-4 border-t border-white/5 text-xs text-[#A3A3B3] leading-relaxed">
+            Yes. We welcome private appointments at our salons in Geneva, New York 5th Avenue, London Mayfair, Tokyo Ginza, and Dubai Mall. You may book your appointment below or through our VIP Concierge line.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 10. CONTACT & VIP CONCIERGE (Form, Email, Phone, Global Boutiques, Social)-->
+  <!-- ========================================================================= -->
+  <section id="contact" class="py-28 px-6 bg-[#07070B] border-t border-white/10 relative">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        
+        <!-- Left: Concierge Information & Global Salons (5 Cols) -->
+        <div class="lg:col-span-5 reveal-on-scroll">
+          <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-2">Private Client Relations</span>
+          <h2 class="font-serif text-4xl font-bold text-white mb-6">
+            Connect with Our Atelier
+          </h2>
+          <p class="text-xs md:text-sm text-[#A3A3B3] leading-relaxed mb-8">
+            Whether seeking custom engraving, bespoke dial commissions, or scheduling an appointment in Geneva, our private horological advisors are at your service.
+          </p>
+
+          <!-- Contact Channels -->
+          <div class="space-y-4 mb-8">
+            <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+              <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] shrink-0">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase tracking-wider text-[#A3A3B3] block">Direct Concierge Email</span>
+                <a href="mailto:concierge@chronolux-geneve.com" class="text-xs text-white hover:text-[#D4AF37] font-medium transition-colors">concierge@chronolux-geneve.com</a>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+              <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] shrink-0">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase tracking-wider text-[#A3A3B3] block">VIP Advisory Line (24/7)</span>
+                <a href="tel:+41228199000" class="text-xs text-white hover:text-[#D4AF37] font-medium transition-colors">+41 22 819 9000 (Switzerland)</a>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+              <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] shrink-0">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase tracking-wider text-[#A3A3B3] block">Geneva Atelier Headquarters</span>
+                <span class="text-xs text-white">Rue du Rhône 42, 1204 Genève, Switzerland</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Global Salons Selector -->
+          <div class="border-t border-white/10 pt-6">
+            <span class="text-xs uppercase tracking-wider text-white font-semibold block mb-3">Global Boutique Locations</span>
+            <div class="flex flex-wrap gap-2" id="boutique-pills">
+              <button class="boutique-pill active px-3 py-1 rounded-full text-[11px] border border-[#D4AF37] bg-[#D4AF37]/10 text-white" data-city="geneva">Geneva</button>
+              <button class="boutique-pill px-3 py-1 rounded-full text-[11px] border border-white/10 bg-white/5 text-[#A3A3B3] hover:text-white" data-city="newyork">New York</button>
+              <button class="boutique-pill px-3 py-1 rounded-full text-[11px] border border-white/10 bg-white/5 text-[#A3A3B3] hover:text-white" data-city="london">London</button>
+              <button class="boutique-pill px-3 py-1 rounded-full text-[11px] border border-white/10 bg-white/5 text-[#A3A3B3] hover:text-white" data-city="tokyo">Tokyo</button>
+              <button class="boutique-pill px-3 py-1 rounded-full text-[11px] border border-white/10 bg-white/5 text-[#A3A3B3] hover:text-white" data-city="dubai">Dubai</button>
+            </div>
+            <div id="boutique-detail-card" class="mt-4 p-4 rounded-xl bg-black/40 border border-white/10 text-xs text-[#A3A3B3]">
+              <div class="font-serif text-white font-medium mb-1" id="boutique-title">Geneva Flagship Salon</div>
+              <p id="boutique-address">Rue du Rhône 42 • Mon-Sat 10:00 - 19:00 CET</p>
+              <p class="text-[11px] text-[#D4AF37] mt-1" id="boutique-phone">Private Viewing Appointments: +41 22 819 9010</p>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="flex items-center gap-4 mt-8">
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
+              <i data-lucide="instagram" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
+              <i data-lucide="twitter" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
+              <i data-lucide="youtube" class="w-4 h-4"></i>
+            </a>
+            <a href="#" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all">
+              <i data-lucide="linkedin" class="w-4 h-4"></i>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Right: VIP Appointment & Inquiry Form (7 Cols) -->
+        <div class="lg:col-span-7 reveal-on-scroll">
+          <div class="glass-panel p-8 md:p-10">
+            <h3 class="font-serif text-2xl font-bold text-white mb-2">Request VIP Private Viewing</h3>
+            <p class="text-xs text-[#A3A3B3] mb-6">Our concierge will contact you within 2 business hours to confirm your private salon reservation.</p>
+
+            <form id="contact-form" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs uppercase tracking-wider text-white font-medium mb-1.5">Full Name *</label>
+                  <input type="text" required placeholder="Lord Arthur Sterling" class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs uppercase tracking-wider text-white font-medium mb-1.5">Email Address *</label>
+                  <input type="email" required placeholder="sterling@private.ch" class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs uppercase tracking-wider text-white font-medium mb-1.5">Telephone / WhatsApp</label>
+                  <input type="tel" placeholder="+41 79 123 4567" class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-xs uppercase tracking-wider text-white font-medium mb-1.5">Timepiece of Interest</label>
+                  <select class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+                    <option>Sovereign Royal Tourbillon ($14,850)</option>
+                    <option>Royal Chronograph Gold ($12,400)</option>
+                    <option>Vanguard 300M Diver ($8,950)</option>
+                    <option>Apex Connected Titanium ($3,850)</option>
+                    <option>Heritage Classic Dress ($7,200)</option>
+                    <option>Celestial Diamond Étoile ($16,500)</option>
+                    <option>Bespoke Commission / Custom Engraving</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs uppercase tracking-wider text-white font-medium mb-1.5">Preferred Salon Location & Date</label>
+                <input type="text" placeholder="Geneva Salon • Next Thursday Afternoon" class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs uppercase tracking-wider text-white font-medium mb-1.5">Special Requests / Message</label>
+                <textarea rows="3" placeholder="Please arrange champagne reception and champagne presentation of the Tourbillon..." class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none"></textarea>
+              </div>
+
+              <div class="pt-2">
+                <button type="submit" class="btn-gold w-full py-4 text-xs font-bold tracking-widest uppercase">
+                  <i data-lucide="check" class="w-4 h-4"></i>
+                  <span>Submit Viewing Request</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 11. LUXURY FOOTER                                                         -->
+  <!-- ========================================================================= -->
+  <footer class="bg-[#040406] border-t border-white/10 py-16 px-6 text-xs text-[#A3A3B3]">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full border border-[#D4AF37] flex items-center justify-center bg-black">
+              <svg class="w-4 h-4 text-[#D4AF37]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="9"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <span class="font-serif tracking-[0.25em] text-base font-bold gold-text">CHRONOLUX</span>
+          </div>
+          <p class="text-[11px] leading-relaxed">
+            Geneva Haute Horlogerie. Crafting timeless mechanical instruments engineered to withstand generations.
+          </p>
+          <div class="text-[10px] text-[#6B6B7B]">
+            Swiss Made • Manufacture 1884
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-serif text-sm text-white font-semibold mb-4 tracking-wider uppercase">Collections</h4>
+          <ul class="space-y-2 text-[11px]">
+            <li><a href="#collection" class="hover:text-[#D4AF37] transition-colors">Sovereign Tourbillons</a></li>
+            <li><a href="#collection" class="hover:text-[#D4AF37] transition-colors">Royal Chronographs</a></li>
+            <li><a href="#collection" class="hover:text-[#D4AF37] transition-colors">Vanguard Sports</a></li>
+            <li><a href="#collection" class="hover:text-[#D4AF37] transition-colors">Heritage Classics</a></li>
+            <li><a href="#collection" class="hover:text-[#D4AF37] transition-colors">Apex Smart Connected</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-serif text-sm text-white font-semibold mb-4 tracking-wider uppercase">Atelier Services</h4>
+          <ul class="space-y-2 text-[11px]">
+            <li><a href="#masterpiece-details" class="hover:text-[#D4AF37] transition-colors">Bespoke Customization</a></li>
+            <li><a href="#features" class="hover:text-[#D4AF37] transition-colors">5-Year Extended Warranty</a></li>
+            <li><a href="#contact" class="hover:text-[#D4AF37] transition-colors">Private Viewing Salon</a></li>
+            <li><a href="#features" class="hover:text-[#D4AF37] transition-colors">White-Glove Armored Courier</a></li>
+            <li><a href="#comparison" class="hover:text-[#D4AF37] transition-colors">Watch Comparison</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-serif text-sm text-white font-semibold mb-4 tracking-wider uppercase">Atelier Newsletter</h4>
+          <p class="text-[11px] mb-3">Receive private allocations and previews of upcoming limited editions.</p>
+          <div class="flex gap-2">
+            <input type="email" placeholder="Email address" class="bg-[#121218] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none flex-1">
+            <button class="btn-gold px-4 py-2 text-xs">Join</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px]">
+        <span>© 2026 ChronoLux Haute Horlogerie S.A. All rights reserved. Registered Geneva, Switzerland.</span>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-white transition-colors">Terms of Haute Horlogerie</a>
+          <a href="#" class="hover:text-white transition-colors">Cookie Preferences</a>
+          <a href="#" class="hover:text-white transition-colors">Escrow Protection</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: PRODUCT DETAILS (Full Specs, Reviews, Gallery, Quantity, Buy Now)  -->
+  <!-- ========================================================================= -->
+  <div id="product-detail-modal" class="modal-overlay">
+    <div class="modal-content max-w-4xl w-full p-6 md:p-10">
+      
+      <!-- Close Button -->
+      <button id="close-detail-modal" class="absolute top-6 right-6 w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#A3A3B3] hover:text-white transition-all">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Image Gallery (5 Cols) -->
+        <div class="md:col-span-5 space-y-4">
+          <div class="rounded-2xl overflow-hidden border border-white/10 bg-black/60 aspect-square">
+            <img id="detail-main-img" src="" alt="Product Detail" class="w-full h-full object-cover">
+          </div>
+          <div class="flex gap-3" id="detail-thumb-gallery">
+            <!-- Thumbnails injected dynamically -->
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.03] border border-white/5 flex items-center gap-3 text-xs text-[#A3A3B3]">
+            <i data-lucide="shield-check" class="w-4 h-4 text-[#D4AF37]"></i>
+            <span>2-Year International Warranty Included</span>
+          </div>
+        </div>
+
+        <!-- Right: Specs, Pricing, Reviews, Buttons (7 Cols) -->
+        <div class="md:col-span-7 flex flex-col">
+          
+          <div class="flex items-center gap-2 mb-2">
+            <span id="detail-category-badge" class="px-2.5 py-0.5 rounded-full text-[10px] tracking-wider uppercase bg-[#D4AF37]/10 text-[#F5E298] border border-[#D4AF37]/30">
+              Luxury
+            </span>
+            <div class="flex items-center text-[#D4AF37] text-xs">
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-[#D4AF37]"></i>
+              <span id="detail-rating-score" class="ml-1 text-white font-medium">4.9</span>
+              <span id="detail-review-count" class="ml-1 text-[#6B6B7B] text-[11px]">(32 reviews)</span>
+            </div>
+          </div>
+
+          <h2 id="detail-title" class="font-serif text-2xl md:text-3xl font-bold text-white mb-2">Watch Title</h2>
+          <div id="detail-price" class="font-serif text-3xl font-bold text-white mb-4">$0</div>
+          
+          <p id="detail-desc" class="text-xs text-[#A3A3B3] leading-relaxed mb-6">Description</p>
+
+          <!-- Tab Switcher: Specifications vs Reviews -->
+          <div class="flex border-b border-white/10 mb-4 text-xs font-semibold uppercase tracking-wider">
+            <button id="tab-specs-btn" class="pb-2 border-b-2 border-[#D4AF37] text-white mr-6">Specifications</button>
+            <button id="tab-reviews-btn" class="pb-2 border-b-2 border-transparent text-[#6B6B7B] hover:text-white">Customer Reviews</button>
+          </div>
+
+          <!-- Tab Content: Specs -->
+          <div id="tab-specs-content" class="space-y-2.5 text-xs mb-6">
+            <div class="flex justify-between py-1.5 border-b border-white/5">
+              <span class="text-[#A3A3B3]">Case Material</span>
+              <span id="spec-material" class="text-white font-medium">904L Stainless Steel & 18K Gold</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/5">
+              <span class="text-[#A3A3B3]">Movement Type</span>
+              <span id="spec-movement" class="text-white font-medium">Automatic Chronometer In-House</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/5">
+              <span class="text-[#A3A3B3]">Water Resistance</span>
+              <span id="spec-water" class="text-white font-medium">10 ATM / 100 Meters</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/5">
+              <span class="text-[#A3A3B3]">Case Diameter</span>
+              <span id="spec-casesize" class="text-white font-medium">41 mm</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/5">
+              <span class="text-[#A3A3B3]">Strap Material</span>
+              <span id="spec-strap" class="text-white font-medium">Solid Jubilee 5-Piece Bracelet</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-white/5">
+              <span class="text-[#A3A3B3]">Warranty</span>
+              <span id="spec-warranty" class="text-white font-medium">2-Year International (Extendable to 5)</span>
+            </div>
+          </div>
+
+          <!-- Tab Content: Reviews -->
+          <div id="tab-reviews-content" class="hidden space-y-4 mb-6 max-h-48 overflow-y-auto pr-2">
+            <div id="detail-reviews-list" class="space-y-3">
+              <!-- Injected dynamically -->
+            </div>
+
+            <!-- Review write form toggle -->
+            <form id="write-review-form" class="pt-3 border-t border-white/10 space-y-2">
+              <span class="text-[11px] font-semibold text-white uppercase block">Add Your Assessment</span>
+              <div class="flex gap-2">
+                <input type="text" id="review-user-name" placeholder="Your Name" required class="bg-[#121218] border border-white/10 rounded-lg px-3 py-1.5 text-xs text-white flex-1">
+                <select id="review-star-select" class="bg-[#121218] border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white">
+                  <option value="5">★★★★★ (5)</option>
+                  <option value="4">★★★★☆ (4)</option>
+                  <option value="3">★★★☆☆ (3)</option>
+                </select>
+              </div>
+              <textarea id="review-comment" placeholder="Your review comments..." required rows="2" class="w-full bg-[#121218] border border-white/10 rounded-lg p-2 text-xs text-white"></textarea>
+              <button type="submit" class="btn-secondary py-1.5 px-4 text-[10px]">Post Review</button>
+            </form>
+          </div>
+
+          <!-- Quantity Stepper & Action Buttons -->
+          <div class="flex items-center gap-4 pt-4 border-t border-white/10 mt-auto">
+            <div class="flex items-center border border-white/20 rounded-full px-3 py-1.5 bg-black/40">
+              <button id="detail-qty-minus" class="text-[#A3A3B3] hover:text-white px-2 font-bold">-</button>
+              <span id="detail-qty-val" class="font-mono text-sm px-2 text-white font-semibold">1</span>
+              <button id="detail-qty-plus" class="text-[#A3A3B3] hover:text-white px-2 font-bold">+</button>
+            </div>
+            
+            <button id="detail-add-cart-btn" class="btn-secondary flex-1 py-3 text-xs tracking-wider">
+              <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+              <span>Add to Cart</span>
+            </button>
+            
+            <button id="detail-buy-now-btn" class="btn-gold flex-1 py-3 text-xs tracking-wider">
+              <span>Buy Now</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- DRAWER: SHOPPING CART (Add/Remove, Quantity, Subtotal, Checkout Trigger)   -->
+  <!-- ========================================================================= -->
+  <div id="cart-drawer" class="drawer-container">
+    
+    <!-- Drawer Header -->
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i data-lucide="shopping-bag" class="w-5 h-5 text-[#D4AF37]"></i>
+        <h3 class="font-serif text-lg font-bold text-white">ChronoLux Vault Cart</h3>
+      </div>
+      <button id="close-cart-btn" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <!-- Free Insured Shipping Progress Bar -->
+    <div class="px-6 py-3 bg-[#121218] border-b border-white/5">
+      <div class="flex items-center justify-between text-[11px] mb-1.5">
+        <span class="text-[#A3A3B3]">Complimentary Armored Courier:</span>
+        <span class="text-emerald-400 font-semibold">Unlocked</span>
+      </div>
+      <div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+        <div class="w-full h-full bg-emerald-400"></div>
+      </div>
+    </div>
+
+    <!-- Cart Items Scrollable List -->
+    <div id="cart-items-list" class="flex-1 overflow-y-auto p-6 space-y-4">
+      <!-- Injected dynamically via app.js -->
+    </div>
+
+    <!-- Cart Empty State -->
+    <div id="cart-empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+      <i data-lucide="shopping-bag" class="w-12 h-12 text-[#6B6B7B] mb-3"></i>
+      <h4 class="font-serif text-base font-semibold text-white mb-1">Your vault is empty</h4>
+      <p class="text-xs text-[#A3A3B3] mb-6">Discover our masterworks to begin your curation.</p>
+      <button onclick="document.getElementById('cart-drawer').classList.remove('active'); window.location.href='#collection';" class="btn-secondary text-xs">
+        Explore Collection
+      </button>
+    </div>
+
+    <!-- Promo Code and Summary Footer -->
+    <div class="p-6 bg-[#08080C] border-t border-white/10 space-y-4">
+      
+      <!-- Promo Code Input -->
+      <div class="flex gap-2">
+        <input type="text" id="promo-input" placeholder="Promo code (Try 'ROYAL10')" class="bg-[#121218] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#6B6B7B] focus:border-[#D4AF37] focus:outline-none flex-1 uppercase">
+        <button id="apply-promo-btn" class="btn-secondary px-4 py-2 text-xs">Apply</button>
+      </div>
+      <div id="promo-feedback" class="text-[11px] hidden"></div>
+
+      <!-- Calculations -->
+      <div class="space-y-1.5 text-xs text-[#A3A3B3]">
+        <div class="flex justify-between">
+          <span>Subtotal</span>
+          <span class="text-white font-mono" id="cart-subtotal">$0</span>
+        </div>
+        <div class="flex justify-between" id="cart-discount-row">
+          <span>VIP Atelier Privilege (10%)</span>
+          <span class="text-emerald-400 font-mono" id="cart-discount">-$0</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Armored Delivery & Escrow</span>
+          <span class="text-emerald-400 font-medium">Complimentary</span>
+        </div>
+        <div class="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
+          <span>Total Acquisition</span>
+          <span class="font-mono text-[#F5E298]" id="cart-grand-total">$0</span>
+        </div>
+      </div>
+
+      <button id="checkout-btn" class="btn-gold w-full py-4 text-xs font-bold tracking-widest uppercase">
+        <i data-lucide="lock" class="w-4 h-4"></i>
+        <span>Proceed to Secure Checkout</span>
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- DRAWER: WISHLIST                                                          -->
+  <!-- ========================================================================= -->
+  <div id="wishlist-drawer" class="drawer-container">
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i data-lucide="heart" class="w-5 h-5 text-[#D4AF37]"></i>
+        <h3 class="font-serif text-lg font-bold text-white">Your Saved Timepieces</h3>
+      </div>
+      <button id="close-wishlist-btn" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <div id="wishlist-items-list" class="flex-1 overflow-y-auto p-6 space-y-4">
+      <!-- Injected dynamically -->
+    </div>
+    <div id="wishlist-empty-state" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+      <i data-lucide="heart" class="w-12 h-12 text-[#6B6B7B] mb-3"></i>
+      <h4 class="font-serif text-base font-semibold text-white mb-1">No timepieces in wishlist</h4>
+      <p class="text-xs text-[#A3A3B3]">Click the heart icon on any watch card to save it for later.</p>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: CHECKOUT (Multi-Step Customer Info, Address, Payment, Place Order) -->
+  <!-- ========================================================================= -->
+  <div id="checkout-modal" class="modal-overlay">
+    <div class="modal-content max-w-3xl w-full p-6 md:p-10">
+      
+      <button id="close-checkout-modal" class="absolute top-6 right-6 w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#A3A3B3] hover:text-white transition-all">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Checkout Flow Container -->
+      <div id="checkout-form-container">
+        
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-serif text-2xl font-bold text-white">Secure Luxury Acquisition</h3>
+            <span class="text-xs text-[#A3A3B3]">256-bit Encrypted Private Vault Protocol</span>
+          </div>
+        </div>
+
+        <!-- Form Steps -->
+        <form id="checkout-order-form" class="space-y-6">
+          
+          <!-- Step 1: Customer Information -->
+          <div>
+            <h4 class="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold mb-3 flex items-center gap-2">
+              <span>1. Customer & Delivery Information</span>
+            </h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input type="text" id="chk-fname" required placeholder="First Name *" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+              <input type="text" id="chk-lname" required placeholder="Last Name *" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+              <input type="email" id="chk-email" required placeholder="Email Address *" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+              <input type="tel" id="chk-phone" required placeholder="Phone / Mobile *" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+            </div>
+          </div>
+
+          <!-- Step 2: Shipping Address -->
+          <div>
+            <h4 class="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold mb-3">
+              2. Shipping Destination (Armored Courier)
+            </h4>
+            <div class="space-y-3">
+              <input type="text" id="chk-address" required placeholder="Street Address *" class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+              <div class="grid grid-cols-3 gap-3">
+                <input type="text" id="chk-city" required placeholder="City *" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+                <input type="text" id="chk-postal" required placeholder="Postal / Zip Code *" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+                <select id="chk-country" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+                  <option>Switzerland</option>
+                  <option>United States</option>
+                  <option>United Kingdom</option>
+                  <option>United Arab Emirates</option>
+                  <option>Germany</option>
+                  <option>France</option>
+                  <option>Singapore</option>
+                  <option>Japan</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Payment Method with Interactive Card Preview -->
+          <div>
+            <h4 class="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold mb-3">
+              3. Payment Authorization
+            </h4>
+            
+            <div class="grid grid-cols-3 gap-2 mb-4">
+              <button type="button" class="pay-method-btn active p-2.5 rounded-xl border border-[#D4AF37] bg-[#D4AF37]/10 text-xs text-white font-medium text-center" data-method="card">
+                Credit / Black Card
+              </button>
+              <button type="button" class="pay-method-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-xs text-[#A3A3B3] font-medium text-center hover:border-white/20" data-method="wire">
+                Bank Wire Escrow
+              </button>
+              <button type="button" class="pay-method-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-xs text-[#A3A3B3] font-medium text-center hover:border-white/20" data-method="applepay">
+                Apple Pay / Google Pay
+              </button>
+            </div>
+
+            <!-- Card Interactive Preview -->
+            <div id="card-payment-fields" class="space-y-4">
+              <div class="credit-card-preview text-xs text-white">
+                <div class="flex justify-between items-center mb-6">
+                  <span class="font-serif tracking-widest text-[#F5E298] font-bold">CHRONOLUX PRIVATE VAULT</span>
+                  <i data-lucide="credit-card" class="w-6 h-6 text-[#D4AF37]"></i>
+                </div>
+                <div class="font-mono text-base tracking-widest mb-4" id="preview-card-num">•••• •••• •••• 9840</div>
+                <div class="flex justify-between text-[10px] uppercase text-[#A3A3B3]">
+                  <div>
+                    <span>Cardholder</span>
+                    <div class="text-xs text-white font-medium" id="preview-card-name">YOUR NAME</div>
+                  </div>
+                  <div>
+                    <span>Expires</span>
+                    <div class="text-xs text-white font-medium" id="preview-card-exp">12/29</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <input type="text" id="card-number-input" required placeholder="Card Number (16 Digits)" maxlength="19" class="col-span-2 bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none font-mono">
+                <input type="text" id="card-holder-input" required placeholder="Name on Card" class="bg-[#121218] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none">
+                <div class="grid grid-cols-2 gap-2">
+                  <input type="text" id="card-expiry-input" required placeholder="MM/YY" maxlength="5" class="bg-[#121218] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none font-mono">
+                  <input type="password" id="card-cvv-input" required placeholder="CVV" maxlength="4" class="bg-[#121218] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white focus:border-[#D4AF37] focus:outline-none font-mono">
+                </div>
+              </div>
+            </div>
+
+            <div id="wire-payment-fields" class="hidden p-4 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-[#A3A3B3] space-y-2">
+              <p class="text-white font-semibold">Swiss Bank Wire Instructions:</p>
+              <p>Bank: Pictet & Cie Genève S.A.</p>
+              <p>IBAN: CH93 0024 0240 8192 0019 4</p>
+              <p>BIC/SWIFT: PICTCHGGXXX</p>
+              <p class="text-[11px] text-[#D4AF37]">Reference: Your Order Number will be generated upon submission.</p>
+            </div>
+          </div>
+
+          <!-- Order Summary in Checkout -->
+          <div class="p-4 rounded-xl bg-black/60 border border-white/10 flex items-center justify-between">
+            <div>
+              <span class="text-xs text-[#A3A3B3] block">Total Charged:</span>
+              <span class="font-serif text-2xl font-bold text-white" id="checkout-summary-total">$0</span>
+            </div>
+            <button type="submit" id="place-order-btn" class="btn-gold py-3.5 px-8 text-xs font-bold tracking-widest uppercase">
+              <span>Place Order</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- Confirmation Success Dialog (Hidden initially) -->
+      <div id="checkout-success-view" class="hidden text-center py-8 space-y-6">
+        <div class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
+          <i data-lucide="check" class="w-8 h-8"></i>
+        </div>
+        <div>
+          <span class="text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-semibold block mb-2">Acquisition Confirmed</span>
+          <h3 class="font-serif text-3xl font-bold text-white mb-2">Welcome to ChronoLux</h3>
+          <p class="text-xs text-[#A3A3B3] max-w-md mx-auto">
+            Your order has been authorized and dispatched to our Master Horologist for final timing certification and armored handover packaging.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-[#121218] border border-white/10 max-w-md mx-auto text-left space-y-3 text-xs">
+          <div class="flex justify-between border-b border-white/5 pb-2">
+            <span class="text-[#A3A3B3]">Order Tracking ID:</span>
+            <span class="font-mono text-[#F5E298] font-bold" id="confirmed-order-id">#CL-884920</span>
+          </div>
+          <div class="flex justify-between border-b border-white/5 pb-2">
+            <span class="text-[#A3A3B3]">Estimated Delivery:</span>
+            <span class="text-white font-medium" id="confirmed-delivery-date">Within 48 Hours</span>
+          </div>
+          <div class="flex justify-between border-b border-white/5 pb-2">
+            <span class="text-[#A3A3B3]">Transit Protocol:</span>
+            <span class="text-emerald-400 font-medium">Armored Courier + Escrow</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[#A3A3B3]">Total Authorized:</span>
+            <span class="font-serif text-sm font-bold text-white" id="confirmed-order-total">$0</span>
+          </div>
+        </div>
+
+        <div class="flex justify-center gap-4">
+          <button onclick="window.print()" class="btn-secondary text-xs">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Print Receipt</span>
+          </button>
+          <button id="close-success-btn" class="btn-gold text-xs">
+            <span>Return to Boutique</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Main JavaScript Engine -->
+  <script src="app.js"></script>
+</body>
+</html>
